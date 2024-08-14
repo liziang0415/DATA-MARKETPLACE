@@ -293,6 +293,16 @@ width:1000px;
     margin-right:25%;
 }
 
+#regisFrame{
+    display:flex;
+    justify-content:start;
+    background-color: #171D25;
+    margin:10%;
+    margin-left:25%;
+    margin-right:25%;
+    height:700px;
+}
+
 #timo{
 align-items: center;
     margin-left:20%;
@@ -343,7 +353,7 @@ justify-content:start;
     font-family:"Motiva Sans",Arial,Helvetica,sans-seri;
     width:200px;
     background-color: #171D25;
-    height:450px;
+    height:400px;
     display: flex;
     flex-direction: column;
     text-align:left;

@@ -3,7 +3,8 @@ import bcrypt
 from flask import Blueprint, render_template, url_for, flash, redirect, session
 from flask_wtf import FlaskForm
 from password_validator import PasswordValidator
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField,DateField
+from wtforms.fields.choices import RadioField
 from wtforms.validators import DataRequired, Length, EqualTo, ValidationError
 from games.domainmodel.model import User
 
@@ -102,6 +103,9 @@ class RegistrationForm(FlaskForm):
                              [DataRequired(message='Your password is required'), PasswordValid()])
     confirm_password = PasswordField('Confirm Password', [DataRequired(message='Your password is required'),
                                                           EqualTo('password')])
+    dob = DateField("Date of Birth", format='%Y-%m-%d')
+    gender = RadioField('Gender', choices=[
+                        ('male', 'Male'), ('female', 'Female')])
     submit = SubmitField('Sign Up')
 
     def validate_username(self, username):

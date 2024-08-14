@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Hashtags</title>
+  </head>
+  <body>
+    <h1>Enter Hashtags</h1>
+    <form method="POST" action="{{ url_for('add_thread_bp.add_thread') }}">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.thread_title.label }}<br>
+            {{ form.thread_title() }}<br>
+            {{ form.thread_content.label }}<br>
+            {{ form.thread_content() }}<br>
+            {{ form.thread_tag.label }}<br>
+            {{ form.thread_tag() }}
+    {% if form.thread_tag.errors %}
+    <ul>
+        {% for error in form.thread_tag.errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+  </body>
+</html>

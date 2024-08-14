@@ -1,18 +1,23 @@
 from datetime import datetime
 
+
 def get_all_games(repo):
     return repo.get_games()
 
 
 def get_sorted_publisher_and_genres(repo):
-    all_tags = set()
-    all_threads = repo.get_threads()
-    for game in all_threads:
+    all_publisher = set()
+    all_genres = set()
+    all_games = repo.get_games()
+    for game in all_games:
         for genre in game.genres:
-            all_tags.add(genre.genre_name)
-    all_tags = list(all_tags)
-    all_tags = sorted(all_tags)
-    return all_tags
+            all_genres.add(genre.genre_name)
+        all_publisher.add(game.publisher.publisher_name)
+    all_genres = list(all_genres)
+    all_genres = sorted(all_genres)
+    all_publisher = list(all_publisher)
+    all_publisher = sorted(all_publisher)
+    return all_publisher, all_genres
 
 
 def get_filtered_games(repo, query='', genre='', publisher=''):

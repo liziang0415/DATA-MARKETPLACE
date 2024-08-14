@@ -1,9 +1,14 @@
+import os
+
+from sqlalchemy import func
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import scoped_session
 
+from .datareader import GameFileCSVReader
+from .orm import Publisher, Genre
 from games.services import NameNotUniqueException
 from .repository import AbstractRepository
-from ..domainmodel import User, Tag, Thread, Favorite, Review
+from ..domainmodel import User, Game, Wishlist
 
 
 class SessionContextManager:
@@ -28,6 +33,8 @@ class SessionContextManager:
         self.__session.rollback()
 
     def reset_session(self):
+        # this method can be used e.g. to allow Flask to start a new session for each http request,
+        # via the 'before_request' callback
         self.close_current_session()
         self.__session = scoped_session(self.__session_factory)
 
@@ -46,21 +53,26 @@ class SqlAlchemyRepository(AbstractRepository):
     def reset_session(self):
         self._session_cm.reset_session()
 
-    def add_thread(self, thread: Thread):
+    def add_game(self, game: Game):
         with self._session_cm as scm:
-            scm.session.merge(thread)
+            scm.session.merge(game)
             scm.commit()
 
-    def add_tag(self, tag: Tag):
+    def add_publisher(self, publisher: Publisher):
         with self._session_cm as scm:
-            scm.session.merge(tag)
+            scm.session.merge(publisher)
             scm.commit()
 
-    def get_threads(self) -> list[Thread]:
-        return self._session_cm.session.query(Thread).all()
+    def add_genre(self, genre: Genre):
+        with self._session_cm as scm:
+            scm.session.merge(genre)
+            scm.commit()
 
-    def get_number_of_threads(self):
-        return self._session_cm.session.query(Thread).count()
+    def get_games(self) -> list[Game]:
+        return self._session_cm.session.query(Game).all()
+
+    def get_number_of_game(self):
+        return self._session_cm.session.query(Game).count()
 
     def add_user(self, user: User):
         with self._session_cm as scm:
@@ -70,49 +82,93 @@ class SqlAlchemyRepository(AbstractRepository):
             scm.session.add(user)
             scm.commit()
 
-    def get_user(self, username: str) -> User:
-        return self._session_cm.session.query(User).filter_by(username=username.lower()).one_or_none()
+    def get_user(self, username):
+        users = self._session_cm.session.query(User).all()
+        for i in users:
+            if i.username.lower() == username.lower():
+                return i
 
-    def add_review(self, review: Review):
+    def add_review(self, review):
         with self._session_cm as scm:
             scm.session.add(review)
             scm.commit()
 
-    def get_reviews_for_thread(self, thread_title: str) -> list[Review]:
-        thread = self.find_thread_by_title(thread_title)
-        return thread.reviews if thread else []
+    def get_reviews_for_game(self, game_title):
+        game = self.find_game_by_title(game_title)
+        if game:
+            return game.reviews
+        return []
 
-    def add_to_favorite(self, username: str, thread: Thread):
+    def add_to_wishlist(self, username, game):
         with self._session_cm as scm:
             user = self.get_user(username)
             if user:
-                favorite = user.favorite
-                if not favorite:
-                    favorite = Favorite(user)
-                    user.favorite = favorite
-                    scm.session.add(favorite)
-                favorite.add_thread(thread)
+                wishlist = user.wishlist
+                if not wishlist:
+                    wishlist = Wishlist(user)
+                    user.wishlist = wishlist
+                    scm.session.add(wishlist)
+                wishlist.add_game(game)
                 scm.commit()
 
-    def remove_from_favorite(self, username: str, thread: Thread):
+    def remove_from_wishlist(self, username, game):
         with self._session_cm as scm:
             user = self.get_user(username)
             if user:
-                favorite = user.favorites
-                if favorite:
-                    favorite.remove_thread(thread)
+                wishlist = user.wishlist
+                if wishlist:
+                    wishlist.remove_game(game)
                     scm.commit()
 
-    def get_favorite(self, username: str) -> list[Thread]:
+    def get_wishlist(self, username):
         user = self.get_user(username)
-        return user.favorites.list_of_thread() if user and user.favorites else []
+        if user and user.wishlist:
+            return user.wishlist.list_of_games()
+        return []
 
-    def is_in_favorite(self, username: str, thread: Thread) -> bool:
+    def is_in_wishlist(self, username, game):
         user = self.get_user(username)
-        return thread in user.favorites.list_of_thread() if user and user.favorites else False
+        if user and user.wishlist:
+            return game in user.wishlist.list_of_games()
+        return False
 
-    def get_tag(self, tag_name: str) -> Tag:
-        return self._session_cm.session.query(Tag).filter_by(tag_name=tag_name.lower()).one_or_none()
+    def get_publisher_by_name(self, publisher_name):
+        try:
+            publishers = self._session_cm.session.query(Publisher).all()
+            for i in publishers:
+                if i.publisher_name.lower() == publisher_name.lower():
+                    return i
+        except NoResultFound:
+            return None
 
-    def find_thread_by_title(self, title: str) -> Thread:
-        return self._session_cm.session.query(Thread).filter_by(title=title.lower()).one_or_none()
+    def get_genres(self, genre_name):
+        try:
+            genres = self._session_cm.session.query(Genre).all()
+            for i in genres:
+                if i.genre_name.lower() == genre_name.lower():
+                    return i
+        except NoResultFound:
+            return None
+
+    def find_game_by_title(self, title: str):
+        all_games = self.get_games()
+        for game in all_games:
+            if game.title.lower() == title.lower():
+                return game
+        return None
+
+
+def populate(repo):
+    dir_name = os.path.dirname(os.path.abspath(__file__))
+    game_file_name = os.path.join(dir_name, "data/games.csv")
+    reader = GameFileCSVReader(game_file_name)
+    reader.read_csv_file()
+
+    for publisher in reader.dataset_of_publishers:
+        repo.add_publisher(publisher)
+
+    for genre in reader.dataset_of_genres:
+        repo.add_genre(genre)
+
+    for game in reader.dataset_of_games:
+        repo.add_game(game)

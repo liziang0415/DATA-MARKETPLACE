@@ -7,7 +7,7 @@
 </head>
 <body>
 {% include 'navbar.html' %}
-<div id="loginFrame">
+<div id="regisFrame">
   <div id="loginContent">
     {% block content %}
     <h1 class="loginTitle">Register</h1>
@@ -40,11 +40,17 @@
             {{ form.confirm_password() }}
             {% if form.confirm_password.errors %}
             <ul>
-                {% for error in form.confirm_password.errors %}
-                <li>{{ error }}</li>
-                {% endfor %}
+                {{ error }}
             </ul>
             {% endif %}
+        </div>
+        <div>
+            {{form.gender.label}}<br>
+            {{form.gender()}}
+        </div>
+        <div>
+            {{form.dob.label}}<br>
+            {{form.dob()}}
         </div>
         <div>
             {{ form.submit() }}

@@ -1,1 +1,1 @@
-from .model import Tag, Thread, User, Review, Favorite
+from .model import Publisher, Genre, Game, User, Review, Wishlist

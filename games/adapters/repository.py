@@ -1,6 +1,6 @@
 import abc
 from typing import List
-from games.domainmodel.model import Thread,Tag, Favorite
+from games.domainmodel.model import Game, Publisher, Genre
 
 repo_instance = None
 
@@ -8,20 +8,23 @@ repo_instance = None
 class AbstractRepository(abc.ABC):
 
     @abc.abstractmethod
-    def add_thread(self, thread: Thread):
+    def add_game(self, game: Game):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_threads(self) -> List[Thread]:
-        raise NotImplementedError
-
-
-    @abc.abstractmethod
-    def add_tag(self, tag: Tag):
+    def get_games(self) -> List[Game]:
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_number_of_threads(self):
+    def add_publisher(self, publisher: Publisher):
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def add_genre(self, genre: Genre):
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def get_number_of_game(self):
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -37,29 +40,33 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_reviews_for_thread(self, thread_title):
+    def get_reviews_for_game(self, game_title):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def add_to_fav(self, username, fav:Favorite):
+    def add_to_wishlist(self, username, game):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def remove_from_fav(self, username, fav:Favorite):
+    def remove_from_wishlist(self, username, game):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_fav(self, username):
+    def get_wishlist(self, username):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def is_in_fav(self, username, thread_title):
+    def is_in_wishlist(self, username, game_title):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_tag(self, tag_name):
+    def get_publisher_by_name(self, name: Publisher.publisher_name):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def find_thread_by_title(self, title: str):
+    def get_genres(self, genre_name):
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def find_game_by_title(self, title: str):
         raise NotImplementedError

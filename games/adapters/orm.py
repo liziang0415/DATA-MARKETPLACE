@@ -1,28 +1,36 @@
-from sqlalchemy import Table, MetaData, Column, Integer, String, ForeignKey, Text
+from sqlalchemy import create_engine, Table, MetaData, Column, Integer, String, ForeignKey, Float, Date, Text, JSON
 from sqlalchemy.orm import mapper, relationship
 
-from games.domainmodel.model import Tag, User, Review, Thread, Favorite
+from games.domainmodel.model import Game, Publisher, Genre, User, Review, Wishlist
 
 metadata = MetaData()
 
-tags = Table(
-    'tags', metadata,
-    Column('tag_name', String(255), primary_key=True)
+publishers = Table(
+    'publishers', metadata,
+    Column('publisher_name', String(255), primary_key=True)
 )
 
-threads = Table(
-    'threads', metadata,
+genres = Table(
+    'genres', metadata,
+    Column('genre_name', String(255), primary_key=True)
+)
+
+games = Table(
+    'games', metadata,
     Column('id', Integer, primary_key=True),
     Column('title', String(255), nullable=False),
     Column('release_date', String(255), nullable=True),
     Column('description', Text, nullable=True),
+    Column('image_url', String(255), nullable=True),
+    Column('price', Float, nullable=True),
+    Column('publisher_name', String(255), ForeignKey('publishers.publisher_name')),
 )
 
-thread_tags = Table(
-    'thread_tags', metadata,
+game_genres = Table(
+    'game_genres', metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
-    Column('thread_id', Integer, ForeignKey('threads.id')),
-    Column('tag_name', String(255), ForeignKey('tags.tag_name'))
+    Column('game_id', Integer, ForeignKey('games.id')),
+    Column('genre_name', String(255), ForeignKey('genres.genre_name'))
 )
 
 users = Table(
@@ -30,70 +38,77 @@ users = Table(
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('username', String(255), nullable=False, unique=True),
     Column('password', String(255), nullable=False),
-    Column('email', String(255), nullable=False),
-    Column('dob', String(255), nullable=False),
-    Column('gender', String(255), nullable=False),
 )
 
 reviews = Table(
     'reviews', metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
-    Column('thread_id', Integer, ForeignKey('threads.id')),
+    Column('game_id', Integer, ForeignKey('games.id')),
     Column('user_id', Integer, ForeignKey('users.id')),
     Column('rating', Integer, nullable=False),
     Column('comment', Text, nullable=True)
 )
 
-favorites = Table(
-    'favorites', metadata,
+wishlists = Table(
+    'wishlists', metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('user_id', Integer, ForeignKey('users.id')),
 )
 
-favorite_threads = Table(
-    'favorite_threads', metadata,
+wishlist_games = Table(
+    'wishlist_games', metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
-    Column('favorite_id', Integer, ForeignKey('favorites.id')),
-    Column('thread_id', Integer, ForeignKey('threads.id'))
+    Column('wishlist_id', Integer, ForeignKey('wishlists.id')),
+    Column('game_id', Integer, ForeignKey('games.id'))
 )
 
 
+
 def map_model_to_tables():
-    mapper(Tag, tags, properties={
-        'tag_name': tags.c.tag_name,
-        'threads': relationship(Thread, secondary=thread_tags, back_populates='tags')
+    # Publisher mapping
+    mapper(Publisher, publishers, properties={
+        '_Publisher__publisher_name': publishers.c.publisher_name
     })
 
-    mapper(Thread, threads, properties={
-        'thread_id': threads.c.id,
-        'title': threads.c.title,
-        'release_date': threads.c.release_date,
-        'description': threads.c.description,
-        'tags': relationship(Tag, secondary=thread_tags, back_populates='threads'),
-        'reviews': relationship(Review, back_populates='thread')
+    # Genre mapping
+    mapper(Genre, genres, properties={
+        '_Genre__genre_name': genres.c.genre_name,
     })
 
+    # Game mapping
+    mapper(Game, games, properties={
+        '_Game__game_id': games.c.id,
+        '_Game__game_title': games.c.title,
+        '_Game__release_date': games.c.release_date,
+        '_Game__description': games.c.description,
+        '_Game__image_url': games.c.image_url,
+        '_Game__price': games.c.price,
+        '_Game__publisher': relationship(Publisher, backref='games', foreign_keys=[games.c.publisher_name]),
+        '_Game__genres': relationship(Genre, secondary=game_genres),
+        '_Game__reviews': relationship(Review, back_populates='_Review__game'),
+    })
+
+    # User mapping
     mapper(User, users, properties={
-        'username': users.c.username,
-        'password': users.c.password,
-        'email': users.c.email,
-        'dob': users.c.dob,
-        'gender': users.c.gender,
-        'reviews': relationship(Review, back_populates='user'),
-        'favorites': relationship(Favorite, uselist=False, back_populates='user')
+        '_User__username': users.c.username,
+        '_User__password': users.c.password,
+        '_User__reviews': relationship(Review, back_populates='_Review__user'),
+        '_User__wishlist': relationship(Wishlist, uselist=False, back_populates='_Wishlist__user')
     })
 
+    # Review mapping
     mapper(Review, reviews, properties={
-        'rating': reviews.c.rating,
-        'comment': reviews.c.comment,
-        'user_id': reviews.c.user_id,
-        'thread_id': reviews.c.thread_id,
-        'user': relationship(User, back_populates='reviews'),
-        'thread': relationship(Thread, back_populates='reviews')
+        '_Review__rating': reviews.c.rating,
+        '_Review__comment': reviews.c.comment,
+        '_Review__user_id': reviews.c.user_id,
+        '_Review__game_id': reviews.c.game_id,
+        '_Review__user': relationship(User, back_populates='_User__reviews'),
+        '_Review__game': relationship(Game, back_populates='_Game__reviews')
     })
 
-    mapper(Favorite, favorites, properties={
-        'user_id': favorites.c.user_id,
-        'user': relationship(User, back_populates='favorites'),
-        'threads': relationship(Thread, secondary=favorite_threads, back_populates='favorites')
+    # Wishlist mapping
+    mapper(Wishlist, wishlists, properties={
+        '_Wishlist__user': relationship(User, back_populates='_User__wishlist'),
+        '_Wishlist__list_of_games': relationship(Game, secondary=wishlist_games)
     })
+
