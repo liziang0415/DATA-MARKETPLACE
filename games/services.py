@@ -1,61 +1,58 @@
 from datetime import datetime
 
 def get_all_games(repo):
-    return repo.get_games()
+    return repo.get_threads()
 
 
-def get_sorted_publisher_and_genres(repo):
+def get_sorted_tags(repo):
     all_tags = set()
     all_threads = repo.get_threads()
-    for game in all_threads:
-        for genre in game.genres:
-            all_tags.add(genre.genre_name)
+    for thread in all_threads:
+        for tag in thread.tags:
+            all_tags.add(tag.tag_name)
     all_tags = list(all_tags)
     all_tags = sorted(all_tags)
     return all_tags
 
 
-def get_filtered_games(repo, query='', genre='', publisher=''):
-    all_games = repo.get_games()
+def get_filtered_threads(repo, query='', tag=''):
+    all_threads = repo.get_threads()
     return [
-        game for game in all_games if
-        (query.lower() in game.title.lower() or query.lower() in game.publisher.publisher_name.lower()) and
-        (not genre or any(g.genre_name == genre for g in game.genres)) and
-        (not publisher or publisher == game.publisher.publisher_name)
+        thread for thread in all_threads if
+        (query.lower() in thread.title.lower()and
+        (not tag or any(g.tag_name == tag for g in thread.tags)))
     ]
 
 
-def find_game_by_title(repo, title: str):
-    return repo.find_game_by_title(title)
+def find_thread_by_title(repo, title: str):
+    return repo.find_thread_by_title(title)
 
 
-def get_filtered_and_sorted_games(repo, page=1, genre_filter=None, sort_order='title'):
-    all_games = repo.get_games()
+def get_filtered_and_sorted_threads(repo, page=1, tag_filter=None, sort_order='title'):
+    all_threads = repo.get_threads()
 
     all_genres = set()
-    for game in all_games:
-        for genre in game.genres:
-            all_genres.add(genre.genre_name)
+    for thread in all_threads:
+        for tag in thread.tags:
+            all_genres.add(tag.tag_name)
 
-    if genre_filter:
-        all_games = [game for game in all_games if genre_filter in [genre.genre_name for genre in game.genres]]
+    if tag_filter:
+        all_threads = [thread for thread in all_threads if tag_filter in [tag.tag_name for tag in thread.tags]]
 
     if sort_order == 'release_date':
-        all_games.sort(key=lambda x: datetime.strptime(x.release_date, "%b %d, %Y") if x.release_date else datetime.min,
+        all_threads.sort(key=lambda x: datetime.strptime(x.release_date, "%b %d, %Y") if x.release_date else datetime.min,
                        reverse=True)
-        all_games.sort(key=lambda x: datetime.strptime(x.release_date, "%b %d, %Y") if x.release_date else datetime.min,
+        all_threads.sort(key=lambda x: datetime.strptime(x.release_date, "%b %d, %Y") if x.release_date else datetime.min,
                        reverse=True)
-    elif sort_order == 'price':
-        all_games.sort(key=lambda x: x.price, reverse=True)
     else:
-        all_games.sort(key=lambda x: x.title.lower())
+        all_threads.sort(key=lambda x: x.title.lower())
 
     per_page = 18
     offset = (page - 1) * per_page
-    games_to_display = all_games[offset:offset + per_page]
-    total_pages = (len(all_games) + per_page - 1) // per_page
+    threads_to_display = all_threads[offset:offset + per_page]
+    total_pages = (len(all_threads) + per_page - 1) // per_page
 
-    return games_to_display, total_pages
+    return threads_to_display, total_pages
 
 
 class NameNotUniqueException(Exception):

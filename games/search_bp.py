@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request
-from games.services import get_filtered_games, get_sorted_publisher_and_genres
+from games.services import get_filtered_threads, get_sorted_tags
 
 search_bp = Blueprint('search', __name__)
 

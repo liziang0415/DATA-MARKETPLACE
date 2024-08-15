@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, sessio
 from flask_wtf import FlaskForm
 from wtforms.validators import DataRequired, NumberRange
 from games.domainmodel import Review
-from games.services import find_game_by_title
+from games.services import find_thread_by_title
 from wtforms import TextAreaField, IntegerField, SubmitField
 
 game_description_bp = Blueprint('game_description_bp', __name__)
@@ -13,15 +13,15 @@ def game_description():
     from games.adapters.repository import repo_instance
     form = ReviewForm()
     thread_title = request.args.get('title')
-    game = find_game_by_title(repo_instance, thread_title)
+    thread = find_thread_by_title(repo_instance, thread_title)
     if form.validate_on_submit():
         username = session['username']
         user = repo_instance.get_user(username)
-        review = Review(user, game, form.rating.data, form.review_text.data)
+        review = Review(user, thread, form.rating.data, form.review_text.data)
         repo_instance.add_review(review)
 
         return redirect(url_for('game_description_bp.game_description', title=thread_title))
-    return render_template("gameDescription.html", game=game, form=form)
+    return render_template("gameDescription.html", game=thread, form=form)
 
 
 class ReviewForm(FlaskForm):
