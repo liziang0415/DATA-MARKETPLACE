@@ -1,6 +1,7 @@
 from datetime import datetime
 
-def get_all_games(repo):
+
+def get_all_threads(repo):
     return repo.get_threads()
 
 
@@ -10,18 +11,18 @@ def get_sorted_tags(repo):
     for thread in all_threads:
         for tag in thread.tags:
             all_tags.add(tag.tag_name)
-    all_tags = list(all_tags)
-    all_tags = sorted(all_tags)
-    return all_tags
+    sorted_tags = sorted(all_tags)
+    return sorted_tags
 
 
 def get_filtered_threads(repo, query='', tag=''):
     all_threads = repo.get_threads()
-    return [
+    filtered_threads = [
         thread for thread in all_threads if
-        (query.lower() in thread.title.lower()and
-        (not tag or any(g.tag_name == tag for g in thread.tags)))
+        (query.lower() in thread.thread_title.lower() and
+         (not tag or any(t.tag_name == tag for t in thread.tags)))
     ]
+    return filtered_threads
 
 
 def find_thread_by_title(repo, title: str):
@@ -29,23 +30,20 @@ def find_thread_by_title(repo, title: str):
 
 
 def get_filtered_and_sorted_threads(repo, page=1, tag_filter=None, sort_order='title'):
-    all_threads = repo.get_threads()
+    if page < 1:
+        raise ValueError("Page number must be greater than 0")
 
-    all_genres = set()
-    for thread in all_threads:
-        for tag in thread.tags:
-            all_genres.add(tag.tag_name)
+    all_threads = repo.get_threads()
 
     if tag_filter:
         all_threads = [thread for thread in all_threads if tag_filter in [tag.tag_name for tag in thread.tags]]
 
     if sort_order == 'release_date':
-        all_threads.sort(key=lambda x: datetime.strptime(x.release_date, "%b %d, %Y") if x.release_date else datetime.min,
-                       reverse=True)
-        all_threads.sort(key=lambda x: datetime.strptime(x.release_date, "%b %d, %Y") if x.release_date else datetime.min,
-                       reverse=True)
+        all_threads.sort(
+            key=lambda x: datetime.strptime(x.release_date, "%Y-%m-%d") if x.release_date else datetime.min,
+            reverse=True)
     else:
-        all_threads.sort(key=lambda x: x.title.lower())
+        all_threads.sort(key=lambda x: x.thread_title.lower())
 
     per_page = 18
     offset = (page - 1) * per_page

@@ -1,3 +1,4 @@
+from sqlalchemy import func
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import scoped_session
 
@@ -51,11 +52,6 @@ class SqlAlchemyRepository(AbstractRepository):
             scm.session.merge(thread)
             scm.commit()
 
-    def add_tag(self, tag: Tag):
-        with self._session_cm as scm:
-            scm.session.merge(tag)
-            scm.commit()
-
     def get_threads(self) -> list[Thread]:
         return self._session_cm.session.query(Thread).all()
 
@@ -64,6 +60,7 @@ class SqlAlchemyRepository(AbstractRepository):
 
     def add_user(self, user: User):
         with self._session_cm as scm:
+            print(f"Adding User: {user.username}, {user.password}, {user.email}, {user.dob}, {user.gender}")
             existing_user = scm.session.query(User).filter_by(username=user.username).first()
             if existing_user:
                 raise NameNotUniqueException(f"Username {user.username} already exists!")
@@ -98,21 +95,28 @@ class SqlAlchemyRepository(AbstractRepository):
         with self._session_cm as scm:
             user = self.get_user(username)
             if user:
-                favorite = user.favorites
+                favorite = user.favorite
                 if favorite:
                     favorite.remove_thread(thread)
                     scm.commit()
 
     def get_favorite(self, username: str) -> list[Thread]:
         user = self.get_user(username)
-        return user.favorites.list_of_thread() if user and user.favorites else []
+        return user.favorite.list_of_thread() if user and user.favorite else []
 
     def is_in_favorite(self, username: str, thread: Thread) -> bool:
         user = self.get_user(username)
-        return thread in user.favorites.list_of_thread() if user and user.favorites else False
+        return thread in user.favorite.list_of_threads() if user and user.favorite else False
 
     def get_tag(self, tag_name: str) -> Tag:
         return self._session_cm.session.query(Tag).filter_by(tag_name=tag_name.lower()).one_or_none()
 
-    def find_thread_by_title(self, title: str) -> Thread:
-        return self._session_cm.session.query(Thread).filter_by(title=title.lower()).one_or_none()
+    from sqlalchemy import func
+
+    def add_tag(self, tag: Tag):
+        with self._session_cm as scm:
+            scm.session.merge(tag)
+            scm.commit()
+
+    def find_thread_by_id(self, thread_id: int) -> Thread:
+        return self._session_cm.session.query(Thread).filter_by(id=thread_id).one_or_none()

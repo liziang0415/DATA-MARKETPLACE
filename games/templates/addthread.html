@@ -2,28 +2,42 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <title>Hashtags</title>
+    <title>Create a New Thread</title>
+    <!-- Add Bootstrap CSS or similar for styling -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   </head>
   <body>
-    <h1>Enter Hashtags</h1>
-    <form method="POST" action="{{ url_for('add_thread_bp.add_thread') }}">
+    <div class="container">
+      <h1>Create a New Thread</h1>
+      <form method="POST" action="{{ url_for('add_thread_bp.add_thread') }}">
         {{ form.hidden_tag() }}
-        <p>
-            {{ form.thread_title.label }}<br>
-            {{ form.thread_title() }}<br>
-            {{ form.thread_content.label }}<br>
-            {{ form.thread_content() }}<br>
-            {{ form.thread_tag.label }}<br>
-            {{ form.thread_tag() }}
-    {% if form.thread_tag.errors %}
-    <ul>
-        {% for error in form.thread_tag.errors %}
-            <li>{{ error }}</li>
-        {% endfor %}
-    </ul>
-{% endif %}
-        </p>
-        <p>{{ form.submit() }}</p>
-    </form>
+
+        <div class="form-group">
+          {{ form.thread_title.label }}<br>
+          {{ form.thread_title(class_='form-control') }}
+        </div>
+
+        <div class="form-group">
+          {{ form.thread_content.label }}<br>
+          {{ form.thread_content(class_='form-control') }}
+        </div>
+
+        <div class="form-group">
+          {{ form.thread_tag.label }}<br>
+          {{ form.thread_tag(class_='form-control') }}
+          {% if form.thread_tag.errors %}
+          <div class="alert alert-danger">
+            <ul>
+              {% for error in form.thread_tag.errors %}
+              <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-primary">{{ form.submit.label }}</button>
+      </form>
+    </div>
   </body>
 </html>

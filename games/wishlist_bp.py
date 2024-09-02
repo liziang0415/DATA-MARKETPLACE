@@ -1,41 +1,41 @@
 from flask import Blueprint, render_template, flash, redirect, session, request
 from games.login_bp import login_required
-from .services import find_game_by_title
+from .services import find_thread_by_title
 
 wishlist_bp = Blueprint('wishlist', __name__)
 
 
-@wishlist_bp.route("/add/<string:game_title>", methods=['GET'])
+@wishlist_bp.route("/add/<int:thread_id>", methods=['GET'])
 @login_required
-def add(game_title):
+def add(thread_id):
     from games.adapters.repository import repo_instance
     username = session['username']
-    game = find_game_by_title(repo_instance, game_title)
-    if game:
-        if repo_instance.is_in_wishlist(username, game):
-            flash(f'{game.title} is already in your wishlist!', 'info')
+    thread = repo_instance.find_thread_by_id(thread_id)
+    if thread:
+        if repo_instance.is_in_favorite(username, thread):
+            flash(f'{thread.thread_title} is already in your favorites!', 'info')
         else:
-            repo_instance.add_to_wishlist(username, game)
-            flash(f'{game.title} has been added to your wishlist!', 'success')
+            repo_instance.add_to_favorite(username, thread)
+            flash(f'{thread.thread_title} has been added to your favorites!', 'success')
     else:
-        flash(f'{game_title} does not exist!', 'danger')
+        flash(f'{thread.thread_title} does not exist!', 'danger')
     return redirect(request.referrer)
 
 
-@wishlist_bp.route("/remove/<string:game_title>", methods=['GET'])
+@wishlist_bp.route("/remove/<string:thread_title>", methods=['GET'])
 @login_required
-def remove(game_title):
+def remove(thread_title):
     from games.adapters.repository import repo_instance
     username = session['username']
-    game = find_game_by_title(repo_instance, game_title)
-    if game:
-        if not repo_instance.is_in_wishlist(username, game):
-            flash(f'{game.title} is not in your wishlist!', 'info')
+    thread = find_thread_by_title(repo_instance, thread_title)
+    if thread:
+        if not repo_instance.is_in_favorite(username, thread):
+            flash(f'{thread.title} is not in your favorites!', 'info')
         else:
-            repo_instance.remove_from_wishlist(username, game)
-            flash(f'{game.title} has been removed from your wishlist!', 'success')
+            repo_instance.remove_from_favorite(username, thread)
+            flash(f'{thread.title} has been removed from your favorites!', 'success')
     else:
-        flash(f'{game_title} does not exist!', 'danger')
+        flash(f'{thread_title} does not exist!', 'danger')
     return redirect(request.referrer)
 
 
@@ -44,7 +44,7 @@ def remove(game_title):
 def view_wishlist():
     from games.adapters.repository import repo_instance
     username = session['username']
-    wishlist = repo_instance.get_wishlist(username)
-    if wishlist is None:
-        wishlist = []
-    return render_template('wishlist.html', wishlist=wishlist)
+    favorites = repo_instance.get_favorite(username)
+    if favorites is None:
+        favorites = []
+    return render_template('wishlist.html', favorites=favorites)

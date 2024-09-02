@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Homepage</title>
+    <title>Login</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
 </head>
 <body>
@@ -34,7 +34,7 @@
         {% endblock %}
     </div>
     <div id="timo">
-        <img src="static/img/login.png">
+        <img src="{{ url_for('static', filename='img/login.png') }}" alt="Login Image">
     </div>
 </div>
 

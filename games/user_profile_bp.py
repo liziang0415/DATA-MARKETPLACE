@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, session
 from .login_bp import login_required
+
 user_profile_bp = Blueprint('user_profile', __name__)
 
 
@@ -9,8 +10,7 @@ def user_profile():
     from games.adapters.repository import repo_instance
     username = session['username']
     user = repo_instance.get_user(username)
-    print(user)
     reviews = user.reviews
-    wishlist = repo_instance.get_wishlist(username)
+    favorites = user.get_fav().list_of_threads if user.get_fav() else []
 
-    return render_template('user_profile.html', user=user, reviews=reviews, wishlist=wishlist)
+    return render_template('user_profile.html', user=user, reviews=reviews, favorites=favorites)
