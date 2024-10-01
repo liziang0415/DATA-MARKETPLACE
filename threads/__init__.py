@@ -17,7 +17,6 @@ from threads.adapters.database_repository import SqlAlchemyRepository
 from threads.adapters.orm import metadata, map_model_to_tables
 import threads.adapters.repository as repo
 
-# Updated SQLite database URI with check_same_thread=False
 DATABASE_URI = 'sqlite:///threads.db?check_same_thread=False'
 
 def create_app(test_config=None):
@@ -33,10 +32,8 @@ def create_app(test_config=None):
         clear_mappers()
         map_model_to_tables()
 
-        # Create tables if they don't exist
         metadata.create_all(database_engine)
 
-    # Register blueprints
     app.register_blueprint(home_bp)
     app.register_blueprint(threads_bp)
     app.register_blueprint(thread_description_bp)

@@ -16,7 +16,6 @@
 </div>
 
 {% if user.is_company %}
-    <!-- Company User Content -->
     <div id="profileNav">
         <span class="selectionTab" style="cursor: pointer;" onclick="showPurchasedThreads();">Purchased Threads</span>
     </div>
@@ -36,7 +35,6 @@
         {% endfor %}
     </div>
 {% else %}
-    <!-- Regular User Content -->
     <div id="profileNav">
         <span class="selectionTab" style="cursor: pointer;" onclick="showWishlist();">Favorites</span>
         <span class="selectionTab" style="cursor: pointer;" onclick="showReviews();">Reviews & Ratings</span>
@@ -116,7 +114,6 @@
         document.getElementById('displayReview2').style.display = 'none';
         document.getElementById('soldThreads').style.display = 'block';
     }
-    // Optionally, call the function to display wishlist by default
     showWishlist();
 {% endif %}
 </script>

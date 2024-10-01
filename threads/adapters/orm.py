@@ -1,6 +1,4 @@
 from sqlalchemy import Table, MetaData, Column, Integer, String, ForeignKey, Text, Boolean
-from sqlalchemy.orm import mapper, relationship
-from threads.domainmodel.model import Tag, User, Review, Thread, Favorite
 
 metadata = MetaData()
 
@@ -15,8 +13,8 @@ threads = Table(
     Column('title', String(255), nullable=False),
     Column('release_date', String(255), nullable=True),
     Column('description', Text, nullable=True),
-    Column('user_id', Integer, ForeignKey('users.id')),  # Foreign key to users
-    Column('sold', Boolean, default=False)  # New 'sold' field
+    Column('user_id', Integer, ForeignKey('users.id')),
+    Column('sold', Boolean, default=False)
 )
 
 
@@ -70,13 +68,11 @@ from sqlalchemy.orm import mapper, relationship
 from threads.domainmodel.model import Tag, User, Review, Thread, Favorite
 
 def map_model_to_tables():
-    # Tag mapping
     mapper(Tag, tags, properties={
         'tag_name': tags.c.tag_name,
         'threads': relationship(Thread, secondary=thread_tags, back_populates='tags')
     })
 
-    # User mapping
     mapper(User, users, properties={
         'username': users.c.username,
         'password': users.c.password,
@@ -94,7 +90,6 @@ def map_model_to_tables():
         )
     })
 
-    # Thread mapping
     mapper(Thread, threads, properties={
         'thread_title': threads.c.title,
         'release_date': threads.c.release_date,
@@ -109,14 +104,12 @@ def map_model_to_tables():
             back_populates='purchased_threads'
         )
     })
-    # Review mapping
     mapper(Review, reviews, properties={
         'comment': reviews.c.comment,
         'user': relationship(User, back_populates='reviews'),
         'thread': relationship(Thread, back_populates='reviews')
     })
 
-    # Favorite mapping
     mapper(Favorite, favorites, properties={
         'user': relationship(User, back_populates='favorite'),
         'list_of_threads': relationship(Thread, secondary=favorite_threads)
