@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile</title>
+    <script src="{{ url_for('static', filename='js/user_profile.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+</head>
+
+<body>
+{% include 'navbar.html' %}
+
+<div id="userInfo">
+    <h1 id="profileTitle">Welcome, {{ user.username }}</h1>
+    <h1 id="Email">Email: {{ user.email }}</h1>
+</div>
+
+{% if user.is_company %}
+    <!-- Company User Content -->
+    <div id="profileNav">
+        <span class="selectionTab" style="cursor: pointer;" onclick="showPurchasedThreads();">Purchased Threads</span>
+    </div>
+    <div id="baseline"></div>
+    <div id="purchasedThreads">
+        {% for thread in purchased_threads %}
+        <div class="threadItem">
+            <div id="purchasedLeftPart">
+                <div class="textPart">
+                    <a href="{{ url_for('thread_description_bp.thread_description', thread_id=thread.id) }}">{{ thread.thread_title }}</a>
+                    <h4 class="wishlistContent">RELEASE DATE: {{ thread.release_date }}</h4>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <p>No threads have been purchased yet.</p>
+        {% endfor %}
+    </div>
+{% else %}
+    <!-- Regular User Content -->
+    <div id="profileNav">
+        <span class="selectionTab" style="cursor: pointer;" onclick="showWishlist();">Favorites</span>
+        <span class="selectionTab" style="cursor: pointer;" onclick="showReviews();">Reviews & Ratings</span>
+        <span class="selectionTab" style="cursor: pointer;" onclick="showSoldThreads();">Sold Threads</span>
+    </div>
+    <div id="baseline"></div>
+
+    <div id="wishlist">
+        {% for thread in favorites %}
+        <div class="threadItem">
+            <div id="wishlistLeftPart">
+                <div class="textPart">
+                    <a href="{{ url_for('thread_description_bp.thread_description', thread_id=thread.id) }}">{{ thread.thread_title }}</a>
+                    <h4 class="wishlistContent">RELEASE DATE: {{ thread.release_date }}</h4>
+                </div>
+            </div>
+            <a href="{{ url_for('wishlist.remove', thread_id=thread.id) }}" class="remove-button">Remove from Favorites</a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div id="soldThreads" style="display: none;">
+        {% for thread in sold_threads %}
+        <div class="threadItem">
+            <div id="soldLeftPart">
+                <div class="textPart">
+                    <a href="{{ url_for('thread_description_bp.thread_description', thread_id=thread.id) }}">{{ thread.thread_title }}</a>
+                    <h4 class="wishlistContent">RELEASE DATE: {{ thread.release_date }}</h4>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <p>No threads have been sold yet.</p>
+        {% endfor %}
+    </div>
+
+    <div id="displayReview2" style="display: none;">
+        {% for review in reviews %}
+        <div class="profileReview">
+            <div id="reviewContentPart">
+                <h2 id="reviewContent">Title: {{ review.thread.thread_title }}</h2>
+                <div id="baseline2"></div>
+                <h4>{{ review.comment }}</h4>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div id="footer">
+    <h6>©️Paul/Kevin/Tong</h6>
+</div>
+
+<script>
+{% if user.is_company %}
+    function showPurchasedThreads() {
+        document.getElementById('purchasedThreads').style.display = 'block';
+        // Hide other sections if any
+    }
+    // Optionally, call the function to display purchased threads by default
+    showPurchasedThreads();
+{% else %}
+    function showWishlist() {
+        document.getElementById('wishlist').style.display = 'block';
+        document.getElementById('displayReview2').style.display = 'none';
+        document.getElementById('soldThreads').style.display = 'none';
+    }
+
+    function showReviews() {
+        document.getElementById('wishlist').style.display = 'none';
+        document.getElementById('displayReview2').style.display = 'block';
+        document.getElementById('soldThreads').style.display = 'none';
+    }
+
+    function showSoldThreads() {
+        document.getElementById('wishlist').style.display = 'none';
+        document.getElementById('displayReview2').style.display = 'none';
+        document.getElementById('soldThreads').style.display = 'block';
+    }
+    // Optionally, call the function to display wishlist by default
+    showWishlist();
+{% endif %}
+</script>
+
+</body>
+</html>

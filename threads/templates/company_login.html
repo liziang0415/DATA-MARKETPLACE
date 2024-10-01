@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Company Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+</head>
+<body>
+{% include 'navbar.html' %}
+<div id="loginFrame">
+    <div id="loginContent">
+        <h1 class="loginTitle">Company Login</h1>
+        {% if error_message %}
+            <p class="error">{{ error_message }}</p>
+        {% endif %}
+        {% if success_message %}
+            <p class="success">{{ success_message }}</p>
+        {% endif %}
+        <form class="loginInput" method="post">
+            {{ form.hidden_tag() }}
+            <div>
+                {{ form.company_name.label }}<br>
+                {{ form.company_name() }}
+                {% if form.company_name.errors %}
+                    <ul>
+                        {% for error in form.company_name.errors %}
+                            <li class="error">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.password.label }}<br>
+                {{ form.password() }}
+                {% if form.password.errors %}
+                    <ul>
+                        {% for error in form.password.errors %}
+                            <li class="error">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.submit() }}
+            </div>
+        </form>
+        <div class="register-link">
+            <p>Don't have a company account? <a href="{{ url_for('company.company_register') }}">Register here</a></p>
+        </div>
+    </div>
+    <div id="timo">
+        <img src="{{ url_for('static', filename='img/login.png') }}" alt="Login Image">
+    </div>
+</div>
+</body>
+</html>

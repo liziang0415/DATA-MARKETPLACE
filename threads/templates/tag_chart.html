@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tag Usage Over Time and Purchase</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <h1>Tag Usage Over Time</h1>
+    <div id="chart-container">
+        <canvas id="tagUsageChart"></canvas>
+    </div>
+
+    <h2>Purchase Threads Associated with Tags</h2>
+    {% if error_message %}
+        <p class="error">{{ error_message }}</p>
+    {% endif %}
+    {% if success_message %}
+        <p class="success">{{ success_message }}</p>
+    {% endif %}
+    <form method="post" class="tag-selection">
+        {% for tag_name in tag_names %}
+            <div>
+                <input type="checkbox" name="tag_names" value="{{ tag_name }}">
+                <label>{{ tag_name }}</label>
+            </div>
+        {% endfor %}
+        <input type="submit" value="Purchase Selected Tags">
+    </form>
+
+    <script>
+        var ctx = document.getElementById('tagUsageChart').getContext('2d');
+
+        var chartData = {
+            labels: {{ chart_data.labels | tojson }},
+            datasets: {{ chart_data.datasets | tojson }}
+        };
+
+        // Create the chart
+        var tagUsageChart = new Chart(ctx, {
+            type: 'line',
+            data: chartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Tag Usage Count'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
