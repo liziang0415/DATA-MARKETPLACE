@@ -1,6 +1,6 @@
 from functools import wraps
 import bcrypt
-from flask import Blueprint, render_template, url_for, redirect, session, request
+from flask import Blueprint, render_template, url_for, redirect, session, request, flash
 from flask_wtf import FlaskForm
 from password_validator import PasswordValidator
 from wtforms import StringField, PasswordField, SubmitField, DateField, SelectField
@@ -10,8 +10,10 @@ from sqlite3 import IntegrityError
 
 login_bp = Blueprint('login', __name__)
 
+
 class NameNotUniqueException(Exception):
     pass
+
 
 # Registration route
 @login_bp.route("/register", methods=['GET', 'POST'])
@@ -31,12 +33,10 @@ def register():
                 gender=form.gender.data
             )
 
-            # Save the user to the database
             db_session = repo_instance._session_cm.session
             db_session.add(new_user)
             db_session.commit()
 
-            # Redirect to login page after registration
             success_message = 'Your account has been created! Please log in.'
             return render_template('login.html', title='Login', form=LoginForm(), success_message=success_message)
         except IntegrityError:
@@ -47,6 +47,7 @@ def register():
             error_message = 'An error occurred while creating your account.'
 
     return render_template('register.html', title='Register', form=form, error_message=error_message)
+
 
 # Login route
 @login_bp.route("/login", methods=['GET', 'POST'])
@@ -60,8 +61,7 @@ def login():
         if user and bcrypt.checkpw(form.password.data.encode('utf-8'), user.password.encode('utf-8')):
             session['logged_in'] = True
             session['username'] = user.username
-            session.permanent = True  # Optional: make the session permanent (depends on your needs)
-            # Redirect to the next page (if there's one), or home by default
+            session.permanent = True
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('home.home'))
         else:
@@ -69,23 +69,37 @@ def login():
 
     return render_template('login.html', title='Login', form=form, error_message=error_message)
 
-# Logout route
+
 @login_bp.route("/logout")
 def logout():
     session.pop('logged_in', None)
     session.pop('username', None)
     return redirect(url_for('home.home'))
 
-# login_required decorator to protect routes
+
 def login_required(view):
     @wraps(view)
     def wrapped_view(**kwargs):
         if not session.get('logged_in'):
             return redirect(url_for('login.login', next=request.url))
+        from threads.adapters.repository import repo_instance
+        username = session.get('username')
+        user = repo_instance.get_user(username)
+        if user is None or user.is_company:
+            flash(f'Need User Login!', 'info')
+            return redirect(url_for('login.login', next=request.url))
         return view(**kwargs)
+
     return wrapped_view
 
-# Custom password validation
+def login_required_general(view):
+    @wraps(view)
+    def wrapped_view(**kwargs):
+        if not session.get('logged_in'):
+            flash(f'Login Require!', 'info')
+            return redirect(url_for('login.login', next=request.url))
+        return view(**kwargs)
+    return wrapped_view
 class PasswordValid:
     def __init__(self, message=None):
         if not message:
@@ -98,10 +112,11 @@ class PasswordValid:
         if not schema.validate(field.data):
             raise ValidationError(self.message)
 
-# Registration form
+
 class RegistrationForm(FlaskForm):
     username = StringField('Username', [DataRequired(message='Your username is required'),
-                                        Length(min=2, max=20, message='Your username must be between 2 and 20 characters.')])
+                                        Length(min=2, max=20,
+                                               message='Your username must be between 2 and 20 characters.')])
     email = StringField('Email', [DataRequired(message='Your email is required'),
                                   Email(message='Invalid email address.')])
     dob = DateField('Date of Birth', format='%Y-%m-%d',
@@ -110,19 +125,21 @@ class RegistrationForm(FlaskForm):
                          validators=[DataRequired(message='Please select your gender.')])
     password = PasswordField('Password', [DataRequired(message='Your password is required.'), PasswordValid()])
     confirm_password = PasswordField('Confirm Password',
-                                     [DataRequired(message='Please confirm your password.'), EqualTo('password', message='Passwords must match.')])
+                                     [DataRequired(message='Please confirm your password.'),
+                                      EqualTo('password', message='Passwords must match.')])
     submit = SubmitField('Sign Up')
 
-    # Custom validation to check if the username is unique
     def validate_username(self, username):
         from threads.adapters.repository import repo_instance
         user = repo_instance.get_user(username.data)
         if user is not None:
             raise ValidationError('Please use a different username.')
 
+
 # Login form
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(message='Your username is required.'),
-                                                   Length(min=2, max=20, message='Your username must be between 2 and 20 characters.')])
+                                                   Length(min=2, max=20,
+                                                          message='Your username must be between 2 and 20 characters.')])
     password = PasswordField('Password', validators=[DataRequired(message='Your password is required.')])
     submit = SubmitField('Login')

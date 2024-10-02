@@ -5,10 +5,8 @@ from threads.company_bp import company_login_required
 tag_chart_bp = Blueprint('tag_chart_bp', __name__)
 
 def get_color_for_tag(tag_name):
-    # Compute a hash of the tag name
     hash_object = hashlib.md5(tag_name.encode('utf-8'))
     hash_hex = hash_object.hexdigest()
-    # Use parts of the hash to create RGB values
     r = int(hash_hex[0:2], 16)
     g = int(hash_hex[2:4], 16)
     b = int(hash_hex[4:6], 16)
@@ -21,16 +19,14 @@ def tag_chart():
     repo = repo_instance
     tag_data = repo.get_tag_usage_over_time()
 
-    # Prepare data for the chart
     chart_labels = sorted(set(date['date'] for tag in tag_data.values() for date in tag))
     datasets = []
-    tag_names = []  # Collect tag names to display in the form
+    tag_names = []
 
     for tag_name, data_points in tag_data.items():
         tag_names.append(tag_name)
         counts = []
         for date in chart_labels:
-            # Find the count for the date or use 0 if not present
             count = next((point['count'] for point in data_points if point['date'] == date), 0)
             counts.append(count)
 

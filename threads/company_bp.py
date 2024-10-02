@@ -25,12 +25,10 @@ def company_register():
                 is_company=True
             )
 
-            # Save the company to the database
             db_session = repo_instance._session_cm.session
             db_session.add(new_company)
             db_session.commit()
 
-            # Redirect to company login page after registration
             success_message = 'Company account has been created successfully! Please log in.'
             return render_template('company_login.html', form=CompanyLoginForm(), success_message=success_message)
         except IntegrityError:

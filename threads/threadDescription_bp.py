@@ -1,9 +1,8 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from flask_wtf import FlaskForm
-from wtforms.validators import DataRequired, NumberRange
+from wtforms.validators import DataRequired
 from threads.domainmodel import Review
-from threads.services import find_thread_by_title
-from wtforms import TextAreaField, IntegerField, SubmitField
+from wtforms import TextAreaField, SubmitField
 
 thread_description_bp = Blueprint('thread_description_bp', __name__)
 
@@ -24,10 +23,14 @@ def thread_description():
 
     if form.validate_on_submit():
         username = session.get('username')
-        if username:
+        user = repo_instance.get_user(username)
+        if not user.is_company:
             user = repo_instance.get_user(username)
             review = Review(user, thread, form.review_text.data)
             repo_instance.add_review(review)
+        else:
+            flash(f'Need User Login!', 'info')
+            return redirect(url_for('login.login', next=request.url))
         return redirect(url_for('thread_description_bp.thread_description', thread_id=thread_id))
 
     return render_template("threadDescription.html", thread=thread, form=form)

@@ -5,13 +5,13 @@ from wtforms.fields.simple import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Length, ValidationError
 from datetime import datetime
 from threads.domainmodel import Thread, Tag
-from threads.login_bp import login_required
+from threads.login_bp import login_required_general
 
 add_thread_bp = Blueprint('add_thread_bp', __name__)
 
 
 @add_thread_bp.route('/add_thread', methods=['GET', 'POST'])
-@login_required
+@login_required_general
 def add_thread():
     from threads.adapters.repository import repo_instance
     form = ThreadContentForm()
@@ -27,8 +27,8 @@ def add_thread():
         thread.user = user
         tag_names = form.thread_tag.data.split(',')
         for tag_name in tag_names:
-            tag_name = tag_name.strip().lower()  # Normalize tag names
-            tag = repo_instance.get_tag(tag_name) or Tag(tag_name)  # Fetch existing or create a new Tag
+            tag_name = tag_name.strip().lower()
+            tag = repo_instance.get_tag(tag_name) or Tag(tag_name)
             thread.add_tag(tag)
         repo_instance.add_thread(thread)
 
