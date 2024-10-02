@@ -4,10 +4,11 @@ from flask_wtf import FlaskForm
 from sqlalchemy.exc import IntegrityError
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Length, EqualTo, Email
-from flask import Blueprint, render_template, url_for, redirect, session, request
+from flask import Blueprint, render_template, url_for, redirect, session, request, flash
 from threads.domainmodel.model import User
 
 company_bp = Blueprint('company', __name__)
+
 
 @company_bp.route("/company/register", methods=['GET', 'POST'])
 def company_register():
@@ -40,6 +41,7 @@ def company_register():
 
     return render_template('company_register.html', form=form, error_message=error_message)
 
+
 @company_bp.route("/company/login", methods=['GET', 'POST'])
 def company_login():
     from threads.adapters.repository import repo_instance
@@ -48,7 +50,8 @@ def company_login():
 
     if form.validate_on_submit():
         company = repo_instance.get_user(form.company_name.data)
-        if company and company.is_company and bcrypt.checkpw(form.password.data.encode('utf-8'), company.password.encode('utf-8')):
+        if company and company.is_company and bcrypt.checkpw(form.password.data.encode('utf-8'),
+                                                             company.password.encode('utf-8')):
             session['logged_in'] = True
             session['company_logged_in'] = True
             session['username'] = company.username
@@ -59,6 +62,7 @@ def company_login():
 
     return render_template('company_login.html', form=form, error_message=error_message)
 
+
 @company_bp.route("/company/logout")
 def company_logout():
     session.pop('logged_in', None)
@@ -66,29 +70,41 @@ def company_logout():
     session.pop('username', None)
     return redirect(url_for('home.home'))
 
+
 def company_login_required(view):
     @wraps(view)
     def wrapped_view(**kwargs):
         from threads.adapters.repository import repo_instance
         if not session.get('logged_in') or not session.get('company_logged_in'):
+            flash(f'Company Login Require!', 'info')
             return redirect(url_for('company.company_login', next=request.url))
         username = session.get('username')
         user = repo_instance.get_user(username)
         if not user or not user.is_company:
+            flash(f'Company Login Require!', 'info')
             return redirect(url_for('company.company_login', next=request.url))
         return view(**kwargs)
+
     return wrapped_view
 
+
 class CompanyRegistrationForm(FlaskForm):
-    company_name = StringField('Company Name', [DataRequired(message='Company name is required.'), Length(min=2, max=100, message='Company name must be between 2 and 100 characters.')])
+    company_name = StringField('Company Name', [DataRequired(message='Company name is required.'),
+                                                Length(min=2, max=100,
+                                                       message='Company name must be between 2 and 100 characters.')])
     email = StringField('Email', [DataRequired(message='Email is required.'), Email(message='Invalid email address.')])
-    password = PasswordField('Password', [DataRequired(message='Password is required.'), Length(min=8, message='Password must be at least 8 characters long.')])
-    confirm_password = PasswordField('Confirm Password', [DataRequired(message='Please confirm your password.'), EqualTo('password', message='Passwords must match.')])
+    password = PasswordField('Password', [DataRequired(message='Password is required.'),
+                                          Length(min=8, message='Password must be at least 8 characters long.')])
+    confirm_password = PasswordField('Confirm Password', [DataRequired(message='Please confirm your password.'),
+                                                          EqualTo('password', message='Passwords must match.')])
     industry = StringField('Industry')
     address = StringField('Address')
     submit = SubmitField('Register')
 
+
 class CompanyLoginForm(FlaskForm):
-    company_name = StringField('Company Name', [DataRequired(message='Company name is required.'), Length(min=2, max=100, message='Company name must be between 2 and 100 characters.')])
+    company_name = StringField('Company Name', [DataRequired(message='Company name is required.'),
+                                                Length(min=2, max=100,
+                                                       message='Company name must be between 2 and 100 characters.')])
     password = PasswordField('Password', [DataRequired(message='Password is required.')])
     submit = SubmitField('Login')

@@ -10,15 +10,6 @@
         {% include 'loginstatus.html' %}
     </div>
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div id="flash-messages">
-          {% for category, message in messages %}
-            <div class="flash-message {{ category }}">{{ message }}</div>
-          {% endfor %}
-        </div>
-      {% endif %}
-    {% endwith %}
 </div>
 
 
@@ -33,4 +24,13 @@
         <input id="searchBar1" type="text" name="query" placeholder="Enter game name">
         <button id="searchBar2" type="submit">Search</button>
     </form>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div id="flash-messages">
+          {% for category, message in messages %}
+            <div class="flash-message {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
 </div>

@@ -81,11 +81,13 @@ def login_required(view):
     @wraps(view)
     def wrapped_view(**kwargs):
         if not session.get('logged_in'):
+            flash(f'Login Require!', 'info')
             return redirect(url_for('login.login', next=request.url))
         from threads.adapters.repository import repo_instance
         username = session.get('username')
         user = repo_instance.get_user(username)
         if user is None or user.is_company:
+            flash(f'Login Require!', 'info')
             flash(f'Need User Login!', 'info')
             return redirect(url_for('login.login', next=request.url))
         return view(**kwargs)
