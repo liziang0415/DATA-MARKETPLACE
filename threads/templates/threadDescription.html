@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Thread Description Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    {% include 'navbar.html' %}
+
+    <div class="contentThreads">
+
+        <div class="aboutReview">
+
+            <div class="desc">
+
+                <div id="aboutThread">
+                    <h2 id="threadTitle">{{ thread.thread_title }}</h2>
+                    <div class="user">sally242</div>
+                    <div class="date">
+                        <h3 class="threadDescriptionTitle"><em>Thread Creation Date:</em></h3>
+                        <p class="threadDescriptionContent">{{ thread.release_date }}</p>
+                    </div>
+                    <div class="tagsCon">
+                        <h3 class="threadDescriptionTitle"><em>Tags:</em></h3>
+                        <p class="threadDescriptionContent">
+                            {% for tag in thread.tags %}
+                            {{ tag.tag_name }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+                    </div>
+
+                    <p class="threadDescriptionContent">{{ thread.description }}</p>
+                </div>
+                <div class="buttonss">
+                    <div class="wishlistButton">
+                        <a class="wishlistButtonA" href="{{ url_for('wishlist.add', thread_id=thread.id) }}">Add to
+                            Favourites</a>
+                    </div>
+                    <div class="wishlistButton">
+                        <a class="wishlistButtonA"
+                            href="{{ url_for('wishlist.remove', thread_id=thread.id) }}">Remove
+                            from Favourites</a>
+                    </div>
+                </div>
+
+                <div class="suggestions">
+                    <div class="suggestionsTitle">
+                        Recommended for you:
+                    </div>
+                    <div class="suggCon">
+                        <div class="suggestionsImg">
+                            <div class="sugg">
+                                <img class='imageee' src="{{ url_for('static', filename='cerave.jpg') }}"
+                                    alt="Trending Image 1">
+                                <div>CeraVe Hydrating Hyaluronic Acid Serum</div>
+                            </div>
+                        </div>
+                        <div class="suggestionsImg">
+                            <div class="sugg">
+                                <img class='imageee' src="{{ url_for('static', filename='neutro.jpg') }}"
+                                    alt="Trending Image 1">
+                                <div>Neutrogena Hydro Boost</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% if session.get('username') %}
+            <div class="comments">
+                <div class="commentArea">
+                    <div id="leaveComment">
+                        <h1 id="submitH1">Leave a comment:</h1>
+                        <form class="formC" method="post">
+                            {{ form.hidden_tag() }}
+                            {{ form.review_text.label }}<br>
+                            {{ form.review_text(class_='form-control') }}<br>
+                            {{ form.submit(class_='btn btn-primary') }}
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="displayReview">
+                    <div class="commentTitle">What are people saying?</div>
+                    {% for review in thread.reviews %}
+                    <div id="reviewGap">
+                        <h2 id="reviewH2"><strong>{{ review.user.username }}</strong></h2>
+                        <div id="baseline2"></div>
+                        <h4 id="reviewContent">{{ review.comment }}</h4>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
