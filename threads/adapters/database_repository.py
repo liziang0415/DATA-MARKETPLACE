@@ -168,3 +168,9 @@ class SqlAlchemyRepository(AbstractRepository):
                    .distinct()
                    .all())
         return threads
+
+    def get_recent_threads(self, limit: int = 3) -> list[Thread]:
+        return (self._session_cm.session.query(Thread)
+                .order_by(Thread.release_date.desc())
+                .limit(limit)
+                .all())

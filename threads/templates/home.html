@@ -6,8 +6,8 @@
     <title>Homepage</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
     <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
-        rel="stylesheet">
+            href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+            rel="stylesheet">
 
     <style>
         * {
@@ -183,21 +183,21 @@
             text-align: center;
         }
 
-        .double {
-            display: flex;
-            align-content: space-between;
-            margin-top: 100px;
-        }
+.double {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 100px;
+}
 
-        .left {
-            width: 80%;
-            padding-right: 50px;
-        }
+.left {
+    flex-basis: 70%;
+    padding-right: 30px;
+}
 
-
-        .right {
-            margin-top: 100px;
-        }
+.right {
+    flex-basis: 30%;
+    margin-top: 0;
+}
 
         .ad-box {
             position: relative;
@@ -251,183 +251,107 @@
 </head>
 
 <body>
-    {% include 'navbar.html' %}
+{% include 'navbar.html' %}
 
-    <div id="content">
-        <!-- Slogan Section -->
-        <div id="about">
-            <div class="slogan">
-                Your Voice, Your Data, Your Control – Empowering Transparent Conversations
-            </div>
+<div id="content">
+    <!-- Slogan Section -->
+    <div id="about">
+        <div class="slogan">
+            Your Voice, Your Data, Your Control – Empowering Transparent Conversations
         </div>
-
-        <!-- Trending Section (Images with Text on Top) -->
-        <div class="trending-section">
-            <h2 class="trendingNow">Trending Now <img src="{{ url_for('static', filename='trendingArrow.png') }}"
-                    class="trendingArrow">
-            </h2>
-            <div class="trending-grid">
-                <!-- Trending Item 1 -->
-                <div class="trending-item">
-                    <img src="{{ url_for('static', filename='nike.png') }}" alt="Trending Image 1">
-                    <div class="trending-text">Best Men's Running Shoes</div>
-                </div>
-                <!-- Trending Item 2 -->
-                <div class="trending-item">
-                    <img src="{{ url_for('static', filename='food.png') }}" alt="Trending Image 2">
-                    <div class="trending-text">Fluffiest Pancakes Recipes</div>
-                </div>
-                <!-- Trending Item 3 -->
-                <div class="trending-item">
-                    <img src="{{ url_for('static', filename='supps.png') }}" alt="Trending Image 3">
-                    <div class="trending-text">Health Supplements</div>
-                </div>
-                <!-- Trending Item 4 -->
-                <div class="trending-item">
-                    <img src="{{ url_for('static', filename='dog.png') }}" alt="Trending Image 4">
-                    <div class="trending-text">Top Family Dogs</div>
-                </div>
-                <!-- Trending Item 5 -->
-                <div class="trending-item">
-                    <img src="{{ url_for('static', filename='snow.png') }}" alt="Trending Image 5">
-                    <div class="trending-text">Trending Winter Vacations</div>
-                </div>
-                <!-- Trending Item 6 -->
-                <div class="trending-item">
-                    <img src="{{ url_for('static', filename='trump.png') }}" alt="Trending Image 6">
-                    <div class="trending-text">Trump Memes 2024</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="double">
-            <div class="left">
-                <!-- Blog/Newsfeed Section -->
-                <div class="feed-header">
-                    <h1>Latest Posts</h1>
-                    <a href="#" class="create-post-button">Create New Post</a>
-                </div>
-
-                <div class="threads">
-                    <!-- Thread 1 -->
-                    <div class="thread-container">
-                        <div class="vote-buttons">
-                            <button class="vote-button">⬆</button>
-                            <span>10</span>
-                            <button class="vote-button">⬇</button>
-                            <button class="comment-button">💬</button>
-                        </div>
-                        <div class="thread-content">
-                            <div class="thread">
-                                <h2>What Are the Best Men's Running Shoes for Flat Feet?</h2>
-                                <p>I've been running for a few years now, but recently I've started experiencing
-                                    discomfort,
-                                    especially around my arches. After doing some research, I found out I have flat
-                                    feet.
-                                    I've
-                                    tried a couple of different running shoes, but they either feel too tight or don't
-                                    provide
-                                    enough support. I mostly run on roads and sometimes on trails, and I’m looking for a
-                                    pair of
-                                    shoes that will help alleviate the pain and make my runs more comfortable. Does
-                                    anyone
-                                    have
-                                    any recommendations for running shoes specifically designed for flat feet?</p>
-                                <small>Posted on 2024-10-03 by User123</small>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Thread 2 -->
-                    <div class="thread-container">
-                        <div class="vote-buttons">
-                            <button class="vote-button">⬆</button>
-                            <span>7</span>
-                            <button class="vote-button">⬇</button>
-                            <button class="comment-button">💬</button>
-                        </div>
-                        <div class="thread-content">
-                            <div class="thread">
-                                <h2>How Do You Stay Informed About Politics Without Feeling Overwhelmed?</h2>
-                                <p>Lately, I've been trying to stay more informed about politics, but it feels
-                                    overwhelming
-                                    to
-                                    keep up with everything. Every day there seems to be a new headline or controversy,
-                                    and
-                                    it’s
-                                    hard to know what’s most important or even where to get balanced information. I want
-                                    to
-                                    stay
-                                    engaged as a responsible citizen, but I’m starting to feel burnt out with the
-                                    constant
-                                    flow
-                                    of news. How do you all stay informed about politics without it taking over your
-                                    life?
-                                    Are
-                                    there specific sources or strategies you recommend for getting a balanced view of
-                                    things
-                                    without feeling overwhelmed? Would love to hear your thoughts!</p>
-                                <small>Posted on 2024-10-02 by User456</small>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Thread 3 -->
-                    <div class="thread-container">
-                        <div class="vote-buttons">
-                            <button class="vote-button">⬆</button>
-                            <span>7</span>
-                            <button class="vote-button">⬇</button>
-                            <button class="comment-button">💬</button>
-                        </div>
-                        <div class="thread-content">
-                            <div class="thread">
-                                <h2>What Are the Best Foods for Sustainable Weight Loss?</h2>
-                                <p>I've been trying to lose weight for a few months now, but I keep getting stuck when
-                                    it
-                                    comes
-                                    to finding the right foods to eat. I don’t want to follow a restrictive diet that’s
-                                    hard
-                                    to
-                                    maintain, but I’m looking for healthy, filling foods that can help me stay on track.
-                                    My
-                                    goal
-                                    is to lose weight in a sustainable way without feeling deprived or constantly
-                                    hungry.
-                                    I’d
-                                    love to hear from anyone who’s had success with weight loss – what foods helped you
-                                    the
-                                    most? Are there any specific meals or snacks that keep you full but still fit into a
-                                    weight
-                                    loss plan? Looking for tips and ideas!</p>
-                                <small>Posted on 2024-10-02 by User456</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="right">
-                <!-- Ad 1 -->
-                <div class="ad-box">
-                    <img src="{{ url_for('static', filename='makeup.jpg') }}" alt="Ad 1">
-                    <div class="ad-text">Win a $150 Sephora Voucher!</div>
-                </div>
-
-                <!-- Ad 2 -->
-                <div class="ad-box">
-                    <img src="{{ url_for('static', filename='shoesAd.jpg') }}" alt="Ad 2">
-                    <div class="ad-text">Redeem Your $10 Nike Voucher with 100 DataLink Points!</div>
-                </div>
-
-                <!-- Ad 3 -->
-                <div class="ad-box">
-                    <img src="{{ url_for('static', filename='winter.jpg') }}" alt="Ad 3">
-                    <div class="ad-text">Exclusive Deals on Winter Clothing!</div>
-                </div>
-            </div>
-        </div>
-
-
     </div>
+
+    <!-- Trending Section (Images with Text on Top) -->
+    <div class="trending-section">
+        <h2 class="trendingNow">Trending Now <img src="{{ url_for('static', filename='trendingArrow.png') }}"
+                                                  class="trendingArrow">
+        </h2>
+        <div class="trending-grid">
+            <!-- Trending Item 1 -->
+            <div class="trending-item">
+                <img src="{{ url_for('static', filename='nike.png') }}" alt="Trending Image 1">
+                <div class="trending-text">Best Men's Running Shoes</div>
+            </div>
+            <!-- Trending Item 2 -->
+            <div class="trending-item">
+                <img src="{{ url_for('static', filename='food.png') }}" alt="Trending Image 2">
+                <div class="trending-text">Fluffiest Pancakes Recipes</div>
+            </div>
+            <!-- Trending Item 3 -->
+            <div class="trending-item">
+                <img src="{{ url_for('static', filename='supps.png') }}" alt="Trending Image 3">
+                <div class="trending-text">Health Supplements</div>
+            </div>
+            <!-- Trending Item 4 -->
+            <div class="trending-item">
+                <img src="{{ url_for('static', filename='dog.png') }}" alt="Trending Image 4">
+                <div class="trending-text">Top Family Dogs</div>
+            </div>
+            <!-- Trending Item 5 -->
+            <div class="trending-item">
+                <img src="{{ url_for('static', filename='snow.png') }}" alt="Trending Image 5">
+                <div class="trending-text">Trending Winter Vacations</div>
+            </div>
+            <!-- Trending Item 6 -->
+            <div class="trending-item">
+                <img src="{{ url_for('static', filename='trump.png') }}" alt="Trending Image 6">
+                <div class="trending-text">Trump Memes 2024</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="double">
+        <div class="left">
+            <!-- Blog/Newsfeed Section -->
+            <div class="feed-header">
+                <h1>Latest Posts</h1>
+                <a href="{{ url_for('add_thread_bp.add_thread') }}" class="create-post-button">Create New Post</a>
+            </div>
+
+            <div class="threads">
+                {% for thread in recent_threads %}
+                <div class="thread-container">
+                    <div class="vote-buttons">
+                        <button class="vote-button">⬆</button>
+                        <span>7</span>
+                        <button class="vote-button">⬇</button>
+                        <button class="comment-button">💬</button>
+                    </div>
+                    <div class="thread-content">
+                        <div class="thread">
+                            <h2>{{ thread.thread_title }}</h2>
+                            <p>{{ thread.description }}</p>
+                            <small>Posted on {{ thread.release_date}} by {{ thread.user.username
+                                }}</small>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="right">
+            <!-- Ad 1 -->
+            <div class="ad-box">
+                <img src="{{ url_for('static', filename='makeup.jpg') }}" alt="Ad 1">
+                <div class="ad-text">Win a $150 Sephora Voucher!</div>
+            </div>
+
+            <!-- Ad 2 -->
+            <div class="ad-box">
+                <img src="{{ url_for('static', filename='shoesAd.jpg') }}" alt="Ad 2">
+                <div class="ad-text">Redeem Your $10 Nike Voucher with 100 DataLink Points!</div>
+            </div>
+
+            <!-- Ad 3 -->
+            <div class="ad-box">
+                <img src="{{ url_for('static', filename='winter.jpg') }}" alt="Ad 3">
+                <div class="ad-text">Exclusive Deals on Winter Clothing!</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 </body>
 
 </html>
