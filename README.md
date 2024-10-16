@@ -30,6 +30,7 @@ Start the Gunicorn service:
 ```aws
 sudo systemctl start gunicorn
 sudo systemctl status gunicorn
+sudo systemctl restart gunicorn
 ````
 End the Gunicorn service:
 
