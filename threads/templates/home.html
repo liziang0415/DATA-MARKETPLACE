@@ -319,7 +319,9 @@
                     </div>
                     <div class="thread-content">
                         <div class="thread">
-                            <h2>{{ thread.thread_title }}</h2>
+                            <a href="{{ url_for('thread_description_bp.thread_description', thread_id=thread.id) }}">
+                                <h2>{{ thread.thread_title }}</h2>
+                            </a>
                             <p>{{ thread.description }}</p>
                             <small>Posted on {{ thread.release_date}} by {{ thread.user.username
                                 }}</small>

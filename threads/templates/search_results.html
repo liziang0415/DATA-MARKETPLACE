@@ -4,6 +4,59 @@
     <meta charset="UTF-8">
     <title>Search Results</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+
+To ensure that each item in #about-container has even spacing, you can use flex properties more effectively. Here's how you can adjust the CSS to achieve even spacing while keeping the design responsive:
+
+Key Adjustments:
+Flex properties for .thread-display: Ensure each .thread-display item has a consistent width and margin.
+Flex container behavior (#about-container): Add some alignment and spacing rules to manage item distribution within the container.
+Here’s the updated CSS for even spacing:
+
+html
+复制代码
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+    <style>
+        /* Style for the individual thread-display */
+        .thread-display {
+            flex-basis: 30%; /* Each item takes up 30% of the container width */
+            margin: 10px; /* Add space between items */
+            box-sizing: border-box; /* Ensure padding and border are included in the element's width */
+        }
+
+        /* Style for the <p> inside thread-display */
+        .thread-display p {
+            padding: 20px; /* Add some padding inside the p */
+            background-color: #171D25;
+            border-radius: 20px;
+            color: white;
+        }
+
+        /* Flex container for even distribution */
+        #about-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-evenly; /* Evenly distribute the items */
+        }
+
+        /* Add some responsiveness */
+        @media (max-width: 768px) {
+            .thread-display {
+                flex-basis: 45%; /* On smaller screens, each item takes up more space */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .thread-display {
+                flex-basis: 100%; /* On very small screens, each item takes up the full width */
+            }
+        }
+    </style>
+
 </head>
 <body>
 {% include 'navbar.html' %}
@@ -16,11 +69,11 @@
 
     <div id="about-container">
         {% for thread in threads %}
-            <div class="thread-display">
-                <a href="{{ url_for('thread_description_bp.thread_description', thread_id=thread.id) }}">
-                    <p class="threadName">{{ thread.thread_title }}</p>
-                </a>
-            </div>
+        <div class="thread-display">
+            <a href="{{ url_for('thread_description_bp.thread_description', thread_id=thread.id) }}">
+                <p class="threadName">{{ thread.thread_title }}</p>
+            </a>
+        </div>
         {% endfor %}
     </div>
 </div>

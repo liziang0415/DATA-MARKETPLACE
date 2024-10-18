@@ -1,21 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>No Results Found</title>
+    <title>403 No Result</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
-</head>
-<body>
-<div id="content">
-    <div id="header">
-        <h1>CS235 Game Library - No Results Found</h1>
-    </div>
-<p><a href="/">Go back to homepage</a></p>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+            rel="stylesheet">
 
-    <div id="errorimg">
-        <img id="gameIcon" src="static/img/error.jpg">
+    <style>
+
+        /* 403 Content */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.7); /* Dark overlay */
+        }
+
+        .container h1 {
+            color: white;
+            font-size: 6em;
+            margin-bottom: 10px;
+        }
+
+        .container p {
+            color: white;
+            font-size: 1.5em;
+        }
+
+    </style>
+</head>
+
+<body>
+{% include 'navbar.html' %}
+<div class="container">
+    <div>
+        <p>No Result Found</p>
     </div>
 </div>
 
 </body>
+
 </html>

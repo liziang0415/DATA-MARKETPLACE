@@ -1,17 +1,19 @@
-<!-- navbar.html -->
 <div id="navBar">
     <img class='logo' src="{{ url_for('static', filename='datalink.png') }}">
     <h2 class="navTitle"><a href="{{ url_for('home.home') }}">Home</a></h2>
     <h2 class="navTitle"><a href="{{ url_for('threads_bp.thread') }}">Posts</a></h2>
     <h2 class="navTitle"><a href="{{ url_for('user_profile.user_profile') }}">User Profile</a></h2>
     <h2 class="navTitle"><a href="{{ url_for('add_thread_bp.add_thread') }}">Create Post</a></h2>
-    <h2 class="navTitle"><a href="{{ url_for('tag_chart_bp.tag_chart') }}">Business Side</a></h2>
+
+    <!-- Only show "Purchase Data" if the user is a company -->
+    {% if session.get('logged_in') and session.get('is_company') %}
+    <h2 class="navTitle"><a href="{{ url_for('tag_chart_bp.tag_chart') }}">Purchase Data</a></h2>
+    {% endif %}
+
     <div id="login">
         {% include 'loginstatus.html' %}
     </div>
-
 </div>
-
 
 <div id="nav2">
     <form class='searchNav' action="{{ url_for('search.search') }}" method="get">

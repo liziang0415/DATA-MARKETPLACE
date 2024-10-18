@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, session
 from threads.services import get_filtered_threads, get_sorted_tags
 
 search_bp = Blueprint('search', __name__)

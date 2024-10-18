@@ -6,6 +6,7 @@ from sqlalchemy.orm import sessionmaker, clear_mappers
 from threads.addthread_bp import add_thread_bp
 from threads.chart_bp import tag_chart_bp
 from threads.company_bp import company_bp
+from threads.export_data_bp import export_data_bp
 from threads.threadDescription_bp import thread_description_bp
 from threads.home_bp import home_bp
 from threads.threads_bp import threads_bp
@@ -44,4 +45,5 @@ def create_app(test_config=None):
     app.register_blueprint(add_thread_bp)
     app.register_blueprint(tag_chart_bp)
     app.register_blueprint(company_bp)
+    app.register_blueprint(export_data_bp)
     return app

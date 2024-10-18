@@ -9,3 +9,6 @@ SQLAlchemy==1.4.41
 Flask-SQLAlchemy
 python-dotenv
 email-validator
+pandas
+openpyxl
+numpy

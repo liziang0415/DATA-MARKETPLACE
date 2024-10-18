@@ -72,3 +72,4 @@ def tag_chart():
             return render_template('tag_chart.html', chart_data=chart_data, tag_names=tag_names, error_message=error_message)
 
     return render_template('tag_chart.html', chart_data=chart_data, tag_names=tag_names)
+

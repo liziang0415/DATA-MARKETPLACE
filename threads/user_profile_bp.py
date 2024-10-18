@@ -23,3 +23,4 @@ def user_profile():
         sold_threads = [thread for thread in threads if thread.sold]
         return render_template('user_profile.html', user=user, reviews=reviews, favorites=favorites,
                                sold_threads=sold_threads)
+

@@ -61,6 +61,7 @@ def login():
         if user and bcrypt.checkpw(form.password.data.encode('utf-8'), user.password.encode('utf-8')):
             session['logged_in'] = True
             session['username'] = user.username
+            session['is_company'] = user.is_company
             session.permanent = True
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('home.home'))
@@ -74,7 +75,9 @@ def login():
 def logout():
     session.pop('logged_in', None)
     session.pop('username', None)
+    session.pop('is_company', None)  # Clear is_company from session
     return redirect(url_for('home.home'))
+
 
 
 def login_required(view):

@@ -5,6 +5,17 @@
     <title>User Profile</title>
     <script src="{{ url_for('static', filename='js/user_profile.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+    <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+            rel="stylesheet">
+    <style>
+        button {
+        display: flex;
+        width:20%;
+        align-items: center;
+        justify-content: center;
+        }
+    </style>
 </head>
 
 <body>
@@ -21,8 +32,12 @@
 </div>
 <div id="baseline"></div>
 <div id="purchasedThreads">
+    <form action="{{ url_for('export_data_bp.export_purchased_data') }}" method="get"
+          style="display: flex; justify-content: center;">
+        <button type="submit" class="export-button">Export Purchased Data to Excel</button>
+    </form>
     {% for thread in purchased_threads %}
-    <div class="threadItem">
+    <div class="profileReview">
         <div id="purchasedLeftPart">
             <div class="textPart">
                 <a href="{{ url_for('thread_description_bp.thread_description', thread_id=thread.id) }}">{{

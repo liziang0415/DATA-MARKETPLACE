@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, session
 from .services import get_sorted_tags
 
 home_bp = Blueprint('home', __name__)
