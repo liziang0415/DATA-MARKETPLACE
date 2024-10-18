@@ -13,7 +13,6 @@ def get_color_for_tag(tag_name):
     return f'rgba({r}, {g}, {b}, 1)'
 
 @tag_chart_bp.route('/tag_chart', methods=['GET', 'POST'])
-@company_login_required
 def tag_chart():
     from threads.adapters.repository import repo_instance
     repo = repo_instance
