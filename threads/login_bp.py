@@ -8,6 +8,8 @@ from wtforms.validators import DataRequired, Length, EqualTo, ValidationError, E
 from threads.domainmodel.model import User
 from sqlite3 import IntegrityError
 
+from threads.services import get_sorted_tags
+
 login_bp = Blueprint('login', __name__)
 
 
@@ -21,6 +23,7 @@ def register():
     from threads.adapters.repository import repo_instance
     form = RegistrationForm()
     error_message = None
+    all_tags = get_sorted_tags(repo_instance)
 
     if form.validate_on_submit():
         try:
@@ -46,7 +49,7 @@ def register():
             db_session.rollback()
             error_message = 'An error occurred while creating your account.'
 
-    return render_template('register.html', title='Register', form=form, error_message=error_message)
+    return render_template('register.html', title='Register', form=form, error_message=error_message,all_tags=all_tags)
 
 
 # Login route
@@ -55,6 +58,7 @@ def login():
     from threads.adapters.repository import repo_instance
     form = LoginForm()
     error_message = None
+    all_tags = get_sorted_tags(repo_instance)
 
     if form.validate_on_submit():
         user = repo_instance.get_user(form.username.data)
@@ -68,7 +72,7 @@ def login():
         else:
             error_message = 'Invalid username or password.'
 
-    return render_template('login.html', title='Login', form=form, error_message=error_message)
+    return render_template('login.html', title='Login', form=form, error_message=error_message,all_tags=all_tags)
 
 
 @login_bp.route("/logout")

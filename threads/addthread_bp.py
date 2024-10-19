@@ -6,6 +6,7 @@ from wtforms.validators import DataRequired, Length, ValidationError
 from datetime import datetime
 from threads.domainmodel import Thread, Tag
 from threads.login_bp import login_required_general
+from threads.services import get_sorted_tags
 
 add_thread_bp = Blueprint('add_thread_bp', __name__)
 
@@ -15,6 +16,7 @@ add_thread_bp = Blueprint('add_thread_bp', __name__)
 def add_thread():
     from threads.adapters.repository import repo_instance
     form = ThreadContentForm()
+    all_tags = get_sorted_tags(repo_instance)
     if form.validate_on_submit():
         thread = Thread(
             thread_title=form.thread_title.data,
@@ -33,7 +35,7 @@ def add_thread():
         repo_instance.add_thread(thread)
 
         return redirect(url_for('home.home'))
-    return render_template('addthread.html', form=form)
+    return render_template('addthread.html', form=form,all_tags=all_tags)
 
 
 def validate_hashtags(form, field):

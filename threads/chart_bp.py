@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, session
 import hashlib
 from threads.company_bp import company_login_required
+from threads.services import get_sorted_tags
 
 tag_chart_bp = Blueprint('tag_chart_bp', __name__)
 
@@ -17,6 +18,7 @@ def tag_chart():
     from threads.adapters.repository import repo_instance
     repo = repo_instance
     tag_data = repo.get_tag_usage_over_time()
+    all_tags = get_sorted_tags(repo_instance)
 
     chart_labels = sorted(set(date['date'] for tag in tag_data.values() for date in tag))
     datasets = []
@@ -70,5 +72,5 @@ def tag_chart():
             error_message = 'An error occurred while processing your purchase.'
             return render_template('tag_chart.html', chart_data=chart_data, tag_names=tag_names, error_message=error_message)
 
-    return render_template('tag_chart.html', chart_data=chart_data, tag_names=tag_names)
+    return render_template('tag_chart.html', chart_data=chart_data, tag_names=tag_names,all_tags=all_tags)
 

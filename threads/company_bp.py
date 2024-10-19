@@ -6,6 +6,7 @@ from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Length, EqualTo, Email
 from flask import Blueprint, render_template, url_for, redirect, session, request, flash
 from threads.domainmodel.model import User
+from threads.services import get_sorted_tags
 
 company_bp = Blueprint('company', __name__)
 
@@ -15,6 +16,7 @@ def company_register():
     from threads.adapters.repository import repo_instance
     form = CompanyRegistrationForm()
     error_message = None
+    all_tags = get_sorted_tags(repo_instance)
 
     if form.validate_on_submit():
         try:
@@ -39,7 +41,7 @@ def company_register():
             db_session.rollback()
             error_message = 'An error occurred while creating the company account.'
 
-    return render_template('company_register.html', form=form, error_message=error_message)
+    return render_template('company_register.html', form=form, error_message=error_message,all_tags=all_tags)
 
 
 @company_bp.route("/company/login", methods=['GET', 'POST'])

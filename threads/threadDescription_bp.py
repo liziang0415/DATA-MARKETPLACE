@@ -4,6 +4,8 @@ from wtforms.validators import DataRequired
 from threads.domainmodel import Review
 from wtforms import TextAreaField, SubmitField
 
+from threads.services import get_sorted_tags
+
 thread_description_bp = Blueprint('thread_description_bp', __name__)
 
 
@@ -12,6 +14,7 @@ def thread_description():
     from threads.adapters.repository import repo_instance
     form = ReviewForm()
     thread_id = request.args.get('thread_id')
+    all_tags = get_sorted_tags(repo_instance)
 
     if not thread_id:
         return "Thread ID is missing", 400
@@ -33,7 +36,7 @@ def thread_description():
             return redirect(url_for('login.login', next=request.url))
         return redirect(url_for('thread_description_bp.thread_description', thread_id=thread_id))
 
-    return render_template("threadDescription.html", thread=thread, form=form)
+    return render_template("threadDescription.html", thread=thread, form=form,all_tags=all_tags)
 
 
 class ReviewForm(FlaskForm):

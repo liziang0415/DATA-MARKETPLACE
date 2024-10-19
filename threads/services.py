@@ -45,7 +45,7 @@ def get_filtered_and_sorted_threads(repo, page=1, tag_filter=None, sort_order='t
     else:
         all_threads.sort(key=lambda x: x.thread_title.lower())
 
-    per_page = 18
+    per_page = 10
     offset = (page - 1) * per_page
     threads_to_display = all_threads[offset:offset + per_page]
     total_pages = (len(all_threads) + per_page - 1) // per_page
