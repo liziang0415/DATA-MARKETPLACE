@@ -39,6 +39,4 @@ sudo systemctl stop gunicorn
 ````
 
 
-复制代码
-exit
 
